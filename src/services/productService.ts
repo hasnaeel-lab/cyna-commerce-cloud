@@ -1,18 +1,18 @@
 
+import httpClient from '@/utils/httpClient';
 import { Product, Category } from '@/types/product';
-import { apiService } from './api';
 
 export interface ProductFilters {
   category?: string;
-  minPrice?: number;
-  maxPrice?: number;
   search?: string;
-  features?: string[];
-  sortBy?: 'name' | 'price' | 'popularity' | 'newest';
-  sortOrder?: 'asc' | 'desc';
+  priceMin?: number;
+  priceMax?: number;
+  isSubscription?: boolean;
+  page?: number;
+  limit?: number;
 }
 
-export interface ProductSearchResult {
+export interface ProductSearchResponse {
   products: Product[];
   total: number;
   page: number;
@@ -21,125 +21,103 @@ export interface ProductSearchResult {
 
 class ProductService {
   // Récupérer tous les produits avec filtres
-  async getProducts(filters: ProductFilters = {}, page = 1, limit = 12): Promise<ProductSearchResult> {
+  async getProducts(filters: ProductFilters = {}): Promise<ProductSearchResponse> {
     try {
-      const params = {
-        ...filters,
-        page,
-        limit,
-      };
-      
-      const response = await apiService.get<ProductSearchResult>('/products', { params });
+      const response = await httpClient.get<ProductSearchResponse>('/products', {
+        params: filters
+      });
       return response;
     } catch (error) {
-      console.error('Erreur lors de la récupération des produits:', error);
+      console.error('Erreur récupération produits:', error);
       throw new Error('Impossible de charger les produits');
     }
   }
 
-  // Récupérer un produit par son ID
-  async getProductById(id: string): Promise<Product> {
+  // Recherche alphabétique intelligente
+  async searchProductsByLetter(letter: string): Promise<Product[]> {
     try {
-      const response = await apiService.get<Product>(`/products/${id}`);
+      const response = await httpClient.get<Product[]>(`/products/search/letter/${letter}`);
       return response;
     } catch (error) {
-      console.error('Erreur lors de la récupération du produit:', error);
-      throw new Error('Produit introuvable');
+      console.error('Erreur recherche alphabétique:', error);
+      throw new Error('Erreur lors de la recherche');
     }
   }
 
-  // Recherche intelligente de produits
+  // Recherche de produits en temps réel
   async searchProducts(query: string): Promise<Product[]> {
     try {
-      if (!query.trim()) return [];
+      if (query.length === 1) {
+        // Si c'est une seule lettre, utiliser la recherche alphabétique
+        return await this.searchProductsByLetter(query);
+      }
       
-      const response = await apiService.get<Product[]>(`/products/search`, {
+      const response = await httpClient.get<Product[]>('/products/search', {
         params: { q: query }
       });
-      
       return response;
     } catch (error) {
-      console.error('Erreur lors de la recherche:', error);
-      return [];
+      console.error('Erreur recherche produits:', error);
+      throw new Error('Erreur lors de la recherche');
     }
   }
 
-  // Recherche avec autocomplétion (première lettre)
-  async getProductsSuggestions(firstLetter: string): Promise<Product[]> {
+  // Récupérer un produit par ID
+  async getProductById(id: string): Promise<Product> {
     try {
-      if (!firstLetter || firstLetter.length === 0) return [];
-      
-      const response = await apiService.get<Product[]>(`/products/suggestions`, {
-        params: { letter: firstLetter.toLowerCase() }
-      });
-      
+      const response = await httpClient.get<Product>(`/products/${id}`);
       return response;
     } catch (error) {
-      console.error('Erreur lors de la récupération des suggestions:', error);
-      return [];
+      console.error('Erreur récupération produit:', error);
+      throw new Error('Produit non trouvé');
     }
   }
 
   // Récupérer les catégories
   async getCategories(): Promise<Category[]> {
     try {
-      const response = await apiService.get<Category[]>('/categories');
+      const response = await httpClient.get<Category[]>('/categories');
       return response;
     } catch (error) {
-      console.error('Erreur lors de la récupération des catégories:', error);
+      console.error('Erreur récupération catégories:', error);
       throw new Error('Impossible de charger les catégories');
     }
   }
 
-  // Récupérer les produits d'une catégorie
-  async getProductsByCategory(categoryId: string, page = 1, limit = 12): Promise<ProductSearchResult> {
+  // Récupérer les produits par catégorie
+  async getProductsByCategory(categoryId: string): Promise<Product[]> {
     try {
-      const response = await apiService.get<ProductSearchResult>(`/categories/${categoryId}/products`, {
-        params: { page, limit }
-      });
+      const response = await httpClient.get<Product[]>(`/categories/${categoryId}/products`);
       return response;
     } catch (error) {
-      console.error('Erreur lors de la récupération des produits de la catégorie:', error);
+      console.error('Erreur produits par catégorie:', error);
       throw new Error('Impossible de charger les produits de cette catégorie');
     }
   }
 
-  // Récupérer les produits populaires
-  async getPopularProducts(limit = 6): Promise<Product[]> {
+  // Produits populaires
+  async getPopularProducts(limit: number = 6): Promise<Product[]> {
     try {
-      const response = await apiService.get<Product[]>('/products/popular', {
+      const response = await httpClient.get<Product[]>('/products/popular', {
         params: { limit }
       });
       return response;
     } catch (error) {
-      console.error('Erreur lors de la récupération des produits populaires:', error);
-      return [];
+      console.error('Erreur produits populaires:', error);
+      throw new Error('Impossible de charger les produits populaires');
     }
   }
 
-  // Récupérer les produits recommandés pour un utilisateur
-  async getRecommendedProducts(userId: string, limit = 6): Promise<Product[]> {
+  // Produits recommandés pour un utilisateur
+  async getRecommendedProducts(userId?: string): Promise<Product[]> {
     try {
-      const response = await apiService.get<Product[]>(`/products/recommended/${userId}`, {
-        params: { limit }
+      const response = await httpClient.get<Product[]>('/products/recommended', {
+        params: { userId }
       });
       return response;
     } catch (error) {
-      console.error('Erreur lors de la récupération des produits recommandés:', error);
-      return [];
-    }
-  }
-
-  // Récupérer les produits similaires
-  async getSimilarProducts(productId: string, limit = 4): Promise<Product[]> {
-    try {
-      const response = await apiService.get<Product[]>(`/products/${productId}/similar`, {
-        params: { limit }
-      });
-      return response;
-    } catch (error) {
-      console.error('Erreur lors de la récupération des produits similaires:', error);
-      return [];
+      console.error('Erreur produits recommandés:', error);
+      return []; // Retourner un tableau vide en cas d'erreur
     }
   }
 }
