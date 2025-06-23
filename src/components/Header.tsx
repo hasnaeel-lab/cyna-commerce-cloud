@@ -32,11 +32,11 @@ const Header = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-8">
-            <Link to="/categories" className="text-gray-700 hover:text-blue-600 transition-colors">
+            <Link to="/catalogue" className="text-gray-700 hover:text-blue-600 transition-colors">
               Catalogue
             </Link>
-            <Link to="/solutions" className="text-gray-700 hover:text-blue-600 transition-colors">
-              Solutions
+            <Link to="/demo" className="text-gray-700 hover:text-blue-600 transition-colors">
+              Démo
             </Link>
             <Link to="/pricing" className="text-gray-700 hover:text-blue-600 transition-colors">
               Tarifs
@@ -140,18 +140,18 @@ const Header = () => {
               {/* Mobile Navigation */}
               <nav className="px-4 space-y-2">
                 <Link
-                  to="/categories"
+                  to="/catalogue"
                   className="block py-2 text-gray-700 hover:text-blue-600 transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   Catalogue
                 </Link>
                 <Link
-                  to="/solutions"
+                  to="/demo"
                   className="block py-2 text-gray-700 hover:text-blue-600 transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Solutions
+                  Démo
                 </Link>
                 <Link
                   to="/pricing"
