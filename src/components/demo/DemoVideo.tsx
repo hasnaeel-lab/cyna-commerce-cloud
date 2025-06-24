@@ -1,8 +1,17 @@
 
 import { Play, CheckCircle, Star, ArrowRight, Video } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useState } from 'react';
 
 const DemoVideo = () => {
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const handlePlayClick = () => {
+    setIsPlaying(true);
+    // Simulate video playing
+    setTimeout(() => setIsPlaying(false), 3000);
+  };
+
   return (
     <section className="py-16 bg-white">
       <div className="container mx-auto px-4">
@@ -17,29 +26,24 @@ const DemoVideo = () => {
         
         <div className="max-w-4xl mx-auto">
           <div className="relative rounded-xl overflow-hidden shadow-2xl mb-8">
-            <video
-              className="w-full aspect-video object-cover"
-              controls
-              poster="/placeholder.svg"
-            >
-              <source src="/demo-video.mp4" type="video/mp4" />
-              <div className="aspect-video bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
-                <div className="text-center text-white">
-                  <Video className="w-20 h-20 mx-auto mb-4 opacity-50" />
-                  <h3 className="text-2xl font-bold mb-2">Présentation CYNA</h3>
-                  <p className="text-gray-300 mb-6">
-                    Découvrez comment nos solutions peuvent transformer votre entreprise
-                  </p>
-                  <Button 
-                    size="lg" 
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3"
-                  >
-                    <Play className="w-6 h-6 mr-2" />
-                    Regarder la vidéo
-                  </Button>
-                </div>
+            <div className="aspect-video bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center">
+              <div className="text-center text-white">
+                <Video className={`w-20 h-20 mx-auto mb-4 ${isPlaying ? 'animate-pulse' : 'opacity-50'}`} />
+                <h3 className="text-2xl font-bold mb-2">Présentation CYNA</h3>
+                <p className="text-gray-300 mb-6">
+                  {isPlaying ? 'Lecture en cours...' : 'Découvrez comment nos solutions peuvent transformer votre entreprise'}
+                </p>
+                <Button 
+                  size="lg" 
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3"
+                  onClick={handlePlayClick}
+                  disabled={isPlaying}
+                >
+                  <Play className="w-6 h-6 mr-2" />
+                  {isPlaying ? 'Lecture...' : 'Regarder la vidéo'}
+                </Button>
               </div>
-            </video>
+            </div>
           </div>
           
           <div className="grid md:grid-cols-3 gap-6">
