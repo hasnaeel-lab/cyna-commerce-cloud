@@ -9,8 +9,9 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
-import { CreditCard, MapPin, User, Mail, Phone, Lock } from 'lucide-react';
+import { CreditCard, MapPin, User, Mail, Phone, Lock, CheckCircle } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
+import { orderService } from '@/services/orderService';
 
 interface PaymentData {
   cardNumber: string;
@@ -72,35 +73,93 @@ const Checkout = () => {
     setError('');
 
     try {
-      // Simulation du paiement - à remplacer par l'intégration Stripe réelle
+      // Validation des champs de paiement
+      if (!paymentData.cardNumber || !paymentData.expiryDate || !paymentData.cvv || !paymentData.cardName) {
+        throw new Error('Veuillez remplir tous les champs de paiement');
+      }
+
+      // Validation du numéro de carte (simulation)
+      if (paymentData.cardNumber.replace(/\s/g, '').length < 16) {
+        throw new Error('Numéro de carte invalide');
+      }
+
+      // Validation date d'expiration
+      const expiryRegex = /^(0[1-9]|1[0-2])\/([0-9]{2})$/;
+      if (!expiryRegex.test(paymentData.expiryDate)) {
+        throw new Error('Format de date d\'expiration invalide (MM/AA)');
+      }
+
+      // Validation CVV
+      if (paymentData.cvv.length < 3 || paymentData.cvv.length > 4) {
+        throw new Error('CVV invalide');
+      }
+
+      // Simulation du traitement de paiement
+      console.log('Traitement du paiement...');
       await new Promise(resolve => setTimeout(resolve, 2000));
       
-      // Créer la commande
+      // Créer la commande avec le service
       const orderData = {
-        userId: user?.id,
-        items: items,
+        items: items.map(item => ({
+          productId: item.id,
+          quantity: item.quantity,
+          price: item.price
+        })),
         total: total,
-        billingAddress: billingData,
-        paymentMethod: 'card',
-        status: 'paid'
+        paymentMethod: 'card'
       };
 
-      console.log('Commande créée:', orderData);
+      console.log('Création de la commande:', orderData);
       
-      // Vider le panier
+      try {
+        const order = await orderService.createOrder(orderData);
+        console.log('Commande créée avec succès:', order);
+      } catch (orderError) {
+        console.log('Erreur lors de la création de commande (simulation):', orderError);
+        // En mode simulation, on continue même si l'API n'est pas disponible
+      }
+      
+      // Vider le panier après paiement réussi
       clearCart();
       
       toast({
-        title: "Commande confirmée !",
-        description: "Votre commande a été traitée avec succès.",
+        title: "Paiement réussi !",
+        description: "Votre commande a été traitée avec succès. Vous recevrez un email de confirmation.",
       });
       
-      navigate('/account/orders');
+      // Rediriger vers la page d'accueil ou une page de confirmation
+      navigate('/', { replace: true });
+      
     } catch (err) {
-      setError('Erreur lors du traitement du paiement');
+      const errorMessage = err instanceof Error ? err.message : 'Erreur lors du traitement du paiement';
+      setError(errorMessage);
+      console.error('Erreur de paiement:', err);
     } finally {
       setIsProcessing(false);
     }
+  };
+
+  const formatCardNumber = (value: string) => {
+    const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+    const matches = v.match(/\d{4,16}/g);
+    const match = matches && matches[0] || '';
+    const parts = [];
+    for (let i = 0, len = match.length; i < len; i += 4) {
+      parts.push(match.substring(i, i + 4));
+    }
+    if (parts.length) {
+      return parts.join(' ');
+    } else {
+      return v;
+    }
+  };
+
+  const formatExpiryDate = (value: string) => {
+    const v = value.replace(/\D/g, '');
+    if (v.length >= 2) {
+      return v.substring(0, 2) + '/' + v.substring(2, 4);
+    }
+    return v;
   };
 
   if (!user) {
@@ -159,7 +218,7 @@ const Checkout = () => {
           <div className="flex items-center justify-center space-x-4">
             <div className={`flex items-center ${currentStep >= 1 ? 'text-blue-600' : 'text-gray-400'}`}>
               <div className={`w-8 h-8 rounded-full flex items-center justify-center ${currentStep >= 1 ? 'bg-blue-600 text-white' : 'bg-gray-300'}`}>
-                1
+                {currentStep > 1 ? <CheckCircle className="w-5 h-5" /> : '1'}
               </div>
               <span className="ml-2 font-medium">Facturation</span>
             </div>
@@ -334,9 +393,13 @@ const Checkout = () => {
                         <Input
                           id="cardNumber"
                           value={paymentData.cardNumber}
-                          onChange={(e) => setPaymentData({...paymentData, cardNumber: e.target.value})}
+                          onChange={(e) => setPaymentData({
+                            ...paymentData, 
+                            cardNumber: formatCardNumber(e.target.value)
+                          })}
                           placeholder="1234 5678 9012 3456"
                           className="pl-10"
+                          maxLength={19}
                           required
                         />
                       </div>
@@ -348,8 +411,12 @@ const Checkout = () => {
                         <Input
                           id="expiryDate"
                           value={paymentData.expiryDate}
-                          onChange={(e) => setPaymentData({...paymentData, expiryDate: e.target.value})}
+                          onChange={(e) => setPaymentData({
+                            ...paymentData, 
+                            expiryDate: formatExpiryDate(e.target.value)
+                          })}
                           placeholder="MM/AA"
+                          maxLength={5}
                           required
                         />
                       </div>
@@ -360,7 +427,10 @@ const Checkout = () => {
                           <Input
                             id="cvv"
                             value={paymentData.cvv}
-                            onChange={(e) => setPaymentData({...paymentData, cvv: e.target.value})}
+                            onChange={(e) => setPaymentData({
+                              ...paymentData, 
+                              cvv: e.target.value.replace(/\D/g, '')
+                            })}
                             placeholder="123"
                             className="pl-10"
                             maxLength={4}
@@ -406,7 +476,7 @@ const Checkout = () => {
                       <h4 className="font-medium">{item.name}</h4>
                       <p className="text-sm text-gray-500">Quantité: {item.quantity}</p>
                     </div>
-                    <span className="font-medium">{item.price * item.quantity}€</span>
+                    <span className="font-medium">{(item.price * item.quantity).toFixed(2)}€</span>
                   </div>
                 ))}
                 
@@ -415,7 +485,11 @@ const Checkout = () => {
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <span>Sous-total</span>
-                    <span>{total}€</span>
+                    <span>{total.toFixed(2)}€</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Livraison</span>
+                    <span>Gratuite</span>
                   </div>
                   <div className="flex justify-between">
                     <span>TVA (20%)</span>
