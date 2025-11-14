@@ -7,6 +7,7 @@ import { AuthProvider } from "@/context/AuthContext";
 import { CartProvider } from "@/context/CartContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import SocialFeed from "@/pages/SocialFeed";
 import Home from "@/pages/Home";
 import Demo from "@/pages/Demo";
 import Catalog from "@/pages/Catalog";
@@ -30,7 +31,8 @@ const App = () => (
               <Header />
               <main className="flex-1">
                 <Routes>
-                  <Route path="/" element={<Home />} />
+                  <Route path="/" element={<SocialFeed />} />
+                  <Route path="/home" element={<Home />} />
                   <Route path="/demo" element={<Demo />} />
                   <Route path="/catalogue" element={<Catalog />} />
                   <Route path="/login" element={<Login />} />
