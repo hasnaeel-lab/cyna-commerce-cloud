@@ -1,103 +1,40 @@
-<<<<<<< HEAD
 # CYNA Commerce Cloud
 
-CYNA Commerce Cloud est une plateforme e-commerce SaaS mobile-first, avec application mobile et back-office, développée pour l'entreprise CYNA-IT.
+## 🚀 Présentation du projet
 
-## Fonctionnalités
+CYNA Commerce Cloud est une **plateforme e-commerce SaaS** mobile-first qui permet aux utilisateurs de naviguer, rechercher et commander des produits facilement via le site web ou l’application mobile.  
+Le projet inclut également un **back-office** pour la gestion des utilisateurs, produits, commandes et paiements.
 
-- Authentification sécurisée (login/register)
-- Gestion du panier et des commandes
-- Recherche avancée de produits
-- Tableau de bord d'administration
-- Chatbot intégré
-- Internationalisation (i18n) et accessibilité (a11y)
+---
 
-## Tech Stack
+## 🌐 Lien du projet
 
-- Frontend : React.js
-- Backend : Laravel
-- Base de données : MySQL/SQLite
-- API REST sécurisée
+- GitHub : [https://github.com/hasnaeel-lab/cyna-commerce-cloud](https://github.com/hasnaeel-lab/cyna-commerce-cloud)
 
-## Installation & Setup
+---
 
+## 🛠 Technologies utilisées
+
+- **Frontend :** React, TypeScript, Vite, Tailwind CSS, shadcn-ui  
+- **Backend :** Laravel (API REST)  
+- **Gestion des données :** SQLite / JSON pour l’API  
+- **Autres :** Chatbot, Authentification sécurisée, Panier, Tableau de bord admin, Recherche avancée  
+
+---
+
+## 📦 Fonctionnalités principales
+
+- Authentification et gestion des utilisateurs (login/register séparés)  
+- Navigation et recherche avancée de produits  
+- Gestion du panier et processus de commande sécurisé  
+- Tableau de bord administrateur pour gérer produits, commandes et paiements  
+- Chatbot intégré pour l’assistance utilisateur  
+- Support multi-langue (i18n) et accessibilité (a11y)  
+
+---
+
+## 💻 Installation et démarrage
+
+1. Cloner le dépôt :  
 ```bash
 git clone https://github.com/hasnaeel-lab/cyna-commerce-cloud.git
-cd cyna-commerce-cloud-main
-npm install
-npm run dev
-=======
-# Welcome to your Lovable project
-
-## Project info
-
-**URL**: https://lovable.dev/projects/6e3ff819-ac86-4063-9c44-aa111523a9be
-
-## How can I edit this code?
-
-There are several ways of editing your application.
-
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/6e3ff819-ac86-4063-9c44-aa111523a9be) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/6e3ff819-ac86-4063-9c44-aa111523a9be) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
->>>>>>> 0a9517b7038758ffe6fa309d9e871b5fc5a88975
