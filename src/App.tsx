@@ -15,8 +15,11 @@ import Register from "@/pages/Register";
 import Cart from "@/pages/Cart";
 import NotFound from "@/pages/NotFound";
 import Checkout from "@/pages/Checkout";
+<<<<<<< HEAD
 import Support from "@/pages/Support";
 import Tarifs from "@/pages/Tarifs";  // <-- Import ajouté
+=======
+>>>>>>> 0a9517b7038758ffe6fa309d9e871b5fc5a88975
 
 const queryClient = new QueryClient();
 
@@ -39,8 +42,12 @@ const App = () => (
                   <Route path="/register" element={<Register />} />
                   <Route path="/panier" element={<Cart />} />
                   <Route path="/checkout" element={<Checkout />} />
+<<<<<<< HEAD
                   <Route path="/support" element={<Support />} />
                   <Route path="/tarifs" element={<Tarifs />} />  {/* <-- Route ajoutée */}
+=======
+                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+>>>>>>> 0a9517b7038758ffe6fa309d9e871b5fc5a88975
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </main>
@@ -53,4 +60,8 @@ const App = () => (
   </QueryClientProvider>
 );
 
+<<<<<<< HEAD
 export default App;
+=======
+export default App;
+>>>>>>> 0a9517b7038758ffe6fa309d9e871b5fc5a88975
